@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dictionary and Word Lookup App</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>📖 Dictionary App</h1>
+
+        <p class="subtitle">
+            Search for a word to find its meaning, pronunciation, and examples.
+        </p>
+
+        <section class="search-section">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Enter a word..."
+            >
+
+            <button id="searchBtn">
+                Search
+            </button>
+
+        </section>
+
+        <div id="message"></div>
+
+        <section id="result" class="result-section">
+
+            <div class="word-header">
+
+                <div>
+                    <h2 id="word"></h2>
+                    <p id="phonetic"></p>
+                </div>
+
+                <button id="audioBtn" class="audio-btn">
+                    🔊
+                </button>
+
+            </div>
+
+            <div id="definitions"></div>
+
+        </section>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>
