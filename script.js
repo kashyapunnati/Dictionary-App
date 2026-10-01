@@ -47,6 +47,10 @@ async function searchWord() {
 
         const data = await response.json();
 
+        if (!data.en || data.en.length === 0) {
+            throw new Error("English word not found");
+        }
+
         currentWord = word;
 
         displayWord(data.en);
@@ -77,6 +81,7 @@ function displayWord(entries) {
 
 
     entries.forEach(function (entry) {
+
         const partOfSpeech =
             document.createElement("h3");
 
@@ -109,6 +114,8 @@ function displayWord(entries) {
                 definitionText
             );
 
+
+    
             if (item.examples && item.examples.length > 0) {
 
                 item.examples.forEach(function (exampleItem) {
@@ -121,7 +128,10 @@ function displayWord(entries) {
 
                     example.textContent =
                         "Example: " +
-                       
+                        removeHTML(
+                            exampleItem.text || exampleItem
+                        );
+
                     definitionBox.appendChild(
                         example
                     );
@@ -138,6 +148,8 @@ function displayWord(entries) {
 
     });
 }
+
+
 function removeHTML(text) {
 
     const temp = document.createElement("div");
