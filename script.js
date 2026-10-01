@@ -20,7 +20,6 @@ searchInput.addEventListener("keydown", function (event) {
     }
 });
 
-
 async function searchWord() {
 
     const word = searchInput.value.trim();
@@ -37,7 +36,8 @@ async function searchWord() {
     try {
 
         const apiUrl =
-            `https://en.wiktionary.org/api/rest_v1/page/definition/${encodeURIComponent(word)}`;
+            "https://en.wiktionary.org/api/rest_v1/page/definition/" +
+            encodeURIComponent(word);
 
         const response = await fetch(apiUrl);
 
@@ -47,8 +47,8 @@ async function searchWord() {
 
         const data = await response.json();
 
-        if (!data.en) {
-            throw new Error("English definition not found");
+        if (!data.en || data.en.length === 0) {
+            throw new Error("English word not found");
         }
 
         currentWord = word;
@@ -60,7 +60,7 @@ async function searchWord() {
 
     } catch (error) {
 
-        console.error(error);
+        console.error("API Error:", error);
 
         message.textContent =
             "Word not found. Please check the spelling and try again.";
@@ -75,17 +75,19 @@ function displayWord(entries) {
     wordElement.textContent = currentWord;
 
     phoneticElement.textContent =
-        "Pronunciation available with 🔊";
+        "Pronunciation: " + currentWord;
 
     definitionsElement.innerHTML = "";
 
 
     entries.forEach(function (entry) {
 
+    
         const partOfSpeech =
             document.createElement("h3");
 
-        partOfSpeech.className = "part-of-speech";
+        partOfSpeech.className =
+            "part-of-speech";
 
         partOfSpeech.textContent =
             entry.partOfSpeech || "Meaning";
@@ -94,45 +96,40 @@ function displayWord(entries) {
             partOfSpeech
         );
 
-
-        entry.senses.forEach(function (sense) {
+        entry.definitions.forEach(function (item) {
 
             const definitionBox =
                 document.createElement("div");
 
-            definitionBox.className = "definition";
+            definitionBox.className =
+                "definition";
 
 
-            if (sense.glosses) {
+            const definitionText =
+                document.createElement("p");
 
-                sense.glosses.forEach(function (gloss) {
+            definitionText.textContent =
+                "• " + removeHTML(item.definition);
 
-                    const definitionText =
-                        document.createElement("p");
+            definitionBox.appendChild(
+                definitionText
+            );
 
-                    definitionText.textContent =
-                        "• " + gloss;
+    if (item.examples && item.examples.length > 0) {
 
-                    definitionBox.appendChild(
-                        definitionText
-                    );
-
-                });
-            }
-
-
-            if (sense.examples) {
-
-                sense.examples.forEach(function (item) {
+                item.examples.forEach(function (exampleItem) {
 
                     const example =
                         document.createElement("p");
 
-                    example.className = "example";
+                    example.className =
+                        "example";
 
                     example.textContent =
                         "Example: " +
-                        (item.text || item);
+                        removeHTML(
+                            exampleItem.text || exampleItem
+                        );
 
                     definitionBox.appendChild(
                         example
@@ -150,6 +147,17 @@ function displayWord(entries) {
 
     });
 }
+
+
+function removeHTML(text) {
+
+    const temp = document.createElement("div");
+
+    temp.innerHTML = text;
+
+    return temp.textContent || temp.innerText || "";
+}
+
 audioBtn.addEventListener("click", function () {
 
     if (!currentWord) {
@@ -163,6 +171,7 @@ audioBtn.addEventListener("click", function () {
     speech.rate = 0.8;
 
     window.speechSynthesis.cancel();
+
     window.speechSynthesis.speak(speech);
 
 });
